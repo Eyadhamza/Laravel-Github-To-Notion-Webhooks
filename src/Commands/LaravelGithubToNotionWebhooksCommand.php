@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace PISpace\LaravelGithubToNotionWebhooks\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class LaravelGithubToNotionWebhooksCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-github-to-notion-webhooks';
 
     public $description = 'My command';
 

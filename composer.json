@@ -1,17 +1,17 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "pispace/laravel-github-to-notion-webhooks",
+    "description": "This is my package laravel-github-to-notion-webhooks",
     "keywords": [
-        ":vendor_name",
+        "PISpace",
         "laravel",
-        ":package_slug"
+        "laravel-github-to-notion-webhooks"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/pispace/laravel-github-to-notion-webhooks",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Eyad Hamza",
+            "email": "Eyadhamza000@gmail.com",
             "role": "Developer"
         }
     ],
@@ -23,25 +23,20 @@
     "require-dev": {
         "laravel/pint": "^1.0",
         "nunomaduro/collision": "^7.9",
-        "nunomaduro/larastan": "^2.0.1",
         "orchestra/testbench": "^8.0",
         "pestphp/pest": "^2.0",
         "pestphp/pest-plugin-arch": "^2.0",
-        "pestphp/pest-plugin-laravel": "^2.0",
-        "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan-deprecation-rules": "^1.0",
-        "phpstan/phpstan-phpunit": "^1.0",
-        "spatie/laravel-ray": "^1.26"
+        "pestphp/pest-plugin-laravel": "^2.0"
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
+            "PISpace\\LaravelGithubToNotionWebhooks\\": "src/",
+            "PISpace\\LaravelGithubToNotionWebhooks\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/"
+            "PISpace\\LaravelGithubToNotionWebhooks\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -61,10 +56,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "PISpace\\LaravelGithubToNotionWebhooks\\LaravelGithubToNotionWebhooksServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "LaravelGithubToNotionWebhooks": "PISpace\\LaravelGithubToNotionWebhooks\\Facades\\LaravelGithubToNotionWebhooks"
             }
         }
     },
