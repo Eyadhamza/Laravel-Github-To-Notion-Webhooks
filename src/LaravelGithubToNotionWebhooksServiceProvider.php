@@ -8,16 +8,14 @@ use PISpace\LaravelGithubToNotionWebhooks\Commands\LaravelGithubToNotionWebhooks
 
 class LaravelGithubToNotionWebhooksServiceProvider extends PackageServiceProvider
 {
+
     public function configurePackage(Package $package): void
     {
-        /*
-         * This class is a Package Service Provider
-         *
-         * More info: https://github.com/spatie/laravel-package-tools
-         */
+        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+
         $package
             ->name('laravel-github-to-notion-webhooks')
-            ->hasConfigFile()
+            ->hasConfigFile('github-webhooks')
             ->hasViews()
             ->hasMigration('create_laravel-github-to-notion-webhooks_table')
             ->hasCommand(LaravelGithubToNotionWebhooksCommand::class);
