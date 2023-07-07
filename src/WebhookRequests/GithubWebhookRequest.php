@@ -33,4 +33,9 @@ class GithubWebhookRequest
     {
         return $this->eventType;
     }
+
+    public function getEventBody()
+    {
+        return $this->request->get($this->eventType->value);
+    }
 }
