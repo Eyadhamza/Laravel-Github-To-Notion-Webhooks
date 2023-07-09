@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
+use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubEntity;
 use PISpace\LaravelGithubToNotionWebhooks\Enum\GithubEventTypeEnum;
 use PISpace\LaravelGithubToNotionWebhooks\Handlers\BaseGithubHandler;
 use PISpace\LaravelGithubToNotionWebhooks\Handlers\GithubIssueHandler;
@@ -16,8 +17,6 @@ use PISpace\LaravelGithubToNotionWebhooks\WebhookRequests\GithubWebhookRequest;
 
 class GithubWebhookController extends Controller
 {
-    private GithubWebhookRequest $request;
-
     public function __construct()
     {
         $this->middleware(VerifyGithubSignature::class);
@@ -25,12 +24,12 @@ class GithubWebhookController extends Controller
 
     public function __invoke(Request $request): JsonResponse
     {
-        $this->request = GithubWebhookRequest::build($request);
+        $githubWebhookRequest = GithubWebhookRequest::build($request);
 
-        match ($this->request->getEventType()) {
-            GithubEventTypeEnum::ISSUE => GithubIssueHandler::run($this->request),
-            GithubEventTypeEnum::PULL_REQUEST => GithubPullRequestHandler::run($this->request),
-            GithubEventTypeEnum::PULL_REQUEST_REVIEW => GithubPullRequestReviewHandler::run($this->request),
+        match ($githubWebhookRequest->getEntityType()) {
+            GithubEventTypeEnum::ISSUE => GithubIssueHandler::run($githubWebhookRequest),
+            GithubEventTypeEnum::PULL_REQUEST => GithubPullRequestHandler::run($githubWebhookRequest),
+            GithubEventTypeEnum::PULL_REQUEST_REVIEW => GithubPullRequestReviewHandler::run($githubWebhookRequest),
         };
 
         return response()->json([

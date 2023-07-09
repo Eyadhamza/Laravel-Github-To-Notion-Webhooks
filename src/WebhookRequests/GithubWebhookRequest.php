@@ -3,24 +3,34 @@
 namespace PISpace\LaravelGithubToNotionWebhooks\WebhookRequests;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubEntity;
+use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubIssue;
+use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubPullRequest;
+use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubPullRequestReview;
 use PISpace\LaravelGithubToNotionWebhooks\Enum\GithubEventTypeEnum;
 
 class GithubWebhookRequest
 {
     private GithubEventTypeEnum $eventType;
+    private GithubEntity $entity;
+
     public function __construct(
-        private Request $request
-    ) {
-        $this->setEventType();
+        private readonly Request $request
+    )
+    {
+        $this->setEventType()->setEntity();
     }
+
     public static function build(Request $request): static
     {
+        Log::info($request);
         return (new static($request));
     }
 
     public function setEventType(): self
     {
-        foreach (config('github-webhooks.events') as $event => $value) {
+        foreach (config('github-webhooks.github.events') as $event => $value) {
             if ($value && $this->request->has($event)) {
                 $this->eventType = GithubEventTypeEnum::from($event);
                 break;
@@ -29,13 +39,33 @@ class GithubWebhookRequest
         return $this;
     }
 
-    public function getEventType(): GithubEventTypeEnum
+    public function getEntityType(): GithubEventTypeEnum
     {
         return $this->eventType;
     }
-
-    public function getEventBody()
+    private function setEntity(): self
     {
-        return $this->request->get($this->eventType->value);
+        $this->entity = match ($this->eventType) {
+            GithubEventTypeEnum::ISSUE => GithubIssue::make($this),
+            GithubEventTypeEnum::PULL_REQUEST => GithubPullRequest::make($this),
+            GithubEventTypeEnum::PULL_REQUEST_REVIEW => GithubPullRequestReview::make($this),
+        };
+
+        $this->entity
+            ->setAuthor()
+            ->setRepository();
+
+        return $this;
     }
+
+    public function getEntity(): GithubEntity
+    {
+        return $this->entity;
+    }
+
+    public function all(): array
+    {
+        return $this->request->all();
+    }
+
 }
