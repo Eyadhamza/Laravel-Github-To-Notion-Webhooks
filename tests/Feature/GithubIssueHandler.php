@@ -10,7 +10,7 @@ beforeEach(function () {
 
 
 it('tests handler', function () {
-    config()->set('notion-api-wrapper.token', 'secret_dNEm32xGjXguoMGMtEEONCIuxyY436NE7P6yNqZ3ltm');
+//    dd(env('NOTION_TOKEN'));
     $response = $this->withHeaders([
         'X-Hub-Signature-256' => 'sha256=' . hash_hmac('sha256', json_encode($this->payload), config('github-webhooks.github.secret')),
     ])->postJson('/github/webhook', $this->payload);

@@ -13,6 +13,9 @@ class LaravelGithubToNotionWebhooksServiceProvider extends PackageServiceProvide
     {
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
 
+        $this->mergeConfigFrom(__DIR__.'/../config/notion-api-wrapper.php', 'notion-api-wrapper');
+
+
         $package
             ->name('laravel-github-to-notion-webhooks')
             ->hasConfigFile('github-webhooks')

@@ -2,15 +2,18 @@
 
 namespace PISpace\LaravelGithubToNotionWebhooks\Entities;
 
-use Pi\Notion\Core\NotionProperty;
-use Pi\Notion\Traits\Notionable;
+use Pi\Notion\Core\BlockContent\NotionRichText;
+use Pi\Notion\Core\Models\NotionUser;
+use Pi\Notion\Core\NotionProperty\NotionPeople;
+use Pi\Notion\Core\NotionProperty\NotionSelect;
+use Pi\Notion\Core\NotionProperty\NotionText;
+use Pi\Notion\Core\NotionProperty\NotionTitle;
+use Pi\Notion\Core\NotionProperty\NotionUrl;
 use PISpace\LaravelGithubToNotionWebhooks\Enum\IssueActionTypeEnum;
 use PISpace\LaravelGithubToNotionWebhooks\WebhookRequests\GithubWebhookRequest;
 
 class GithubIssue extends GithubEntity
 {
-
-    use Notionable;
     protected string $notionDatabaseId;
     private IssueActionTypeEnum $action;
     private string $url;
@@ -28,12 +31,15 @@ class GithubIssue extends GithubEntity
     public function mapToNotion(): array
     {
         return [
-            'title' => NotionProperty::title(),
-            'url' => NotionProperty::url(),
-            'description' => NotionProperty::richText('Description'),
-            'state' => NotionProperty::richText('Status'),
-            'author' => NotionProperty::richText('Author'),
-            'repository' => NotionProperty::richText('Repository'),
+            'title' => NotionTitle::make('Title'),
+            'url' => NotionUrl::make('Url'),
+            'description' => NotionText::make('Description'),
+            'state' => NotionSelect::make('Status'),
+            'author' => NotionPeople::make('Author')
+                ->setPeople([
+                    new NotionUser('2c4d6a4a-12fe-4ce8-a7e4-e3019cc4765f')
+                ]),
+            'repository' => NotionText::make('Repository'),
         ];
     }
 

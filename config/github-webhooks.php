@@ -10,7 +10,7 @@ return [
     ],
     'notion' => [
         'databases' => [
-            'issues' => '74dc9419bec24f10bb2e65c1259fc65a',
+            'issues' => 'cc66f47f03cb4b62a774f6d5f34463ce',
         ],
     ]
 ];

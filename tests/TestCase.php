@@ -2,6 +2,7 @@
 
 namespace PISpace\LaravelGithubToNotionWebhooks\Tests;
 
+use Dotenv\Dotenv;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
 use PISpace\LaravelGithubToNotionWebhooks\LaravelGithubToNotionWebhooksServiceProvider;
@@ -10,6 +11,10 @@ class TestCase extends Orchestra
 {
     protected function setUp(): void
     {
+        if (file_exists(dirname(__DIR__) . '/.env.test')) {
+            (Dotenv::createImmutable(dirname(__DIR__), '.env.test'))->load();
+        }
+
         parent::setUp();
 
         Factory::guessFactoryNamesUsing(

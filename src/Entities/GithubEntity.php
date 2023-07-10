@@ -3,11 +3,13 @@
 namespace PISpace\LaravelGithubToNotionWebhooks\Entities;
 
 
+use Pi\Notion\Traits\Notionable;
 use PISpace\LaravelGithubToNotionWebhooks\Enum\GithubEventTypeEnum;
 use PISpace\LaravelGithubToNotionWebhooks\WebhookRequests\GithubWebhookRequest;
 
 abstract class GithubEntity
 {
+    use Notionable;
     protected GithubSender $sender;
     protected GithubRepository $repository;
     protected GithubEventTypeEnum $entityType;
