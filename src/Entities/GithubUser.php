@@ -2,29 +2,32 @@
 
 namespace PISpace\LaravelGithubToNotionWebhooks\Entities;
 
-class GithubSender extends GithubEntity
+class GithubUser
 {
+    private string $id;
     private string $name;
+    private array $data;
 
-    public function mapToNotion(): array
+    public function __construct(array $data)
     {
-        return [
-            'name' => $this->name,
-        ];
+        $this->data = $data;
+        $this->setAttributes();
     }
-
+    public static function make(array $data): self
+    {
+        return new static($data);
+    }
     public function getAttributes(): array
     {
         return [
+            'id' => $this->id,
             'name' => $this->name,
         ];
     }
 
-    public function setAttributes(array $data): GithubEntity
+    public function setAttributes(): self
     {
-        $data = $data[$this->entityType->value]['user'];
-
-        $this->name = $data['login'];
+        $this->name = $this->data['login'];
 
         return $this;
     }
@@ -39,13 +42,9 @@ class GithubSender extends GithubEntity
         return $this->name;
     }
 
-    public function getEmail(): string
+    public function setNotionDatabaseId(): self
     {
-        return $this->email;
-    }
-
-    public function setNotionDatabaseId(): GithubEntity
-    {
+        $this->notionDatabaseId = config('github-webhooks.notion.databases.users');
         return $this;
     }
 

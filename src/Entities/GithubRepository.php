@@ -2,35 +2,27 @@
 
 namespace PISpace\LaravelGithubToNotionWebhooks\Entities;
 
-class GithubRepository extends GithubEntity
+class GithubRepository
 {
 
     private string $name;
+    private array $data;
 
-    public function mapToNotion(): array
+    public function __construct(array $data)
     {
-        // TODO: Implement mapToNotion() method.
+        $this->data = $data;
+        $this->setAttributes();
     }
 
-    public function getAttributes(): array
+    public static function make(array $data): static
     {
-        // TODO: Implement getAttributes() method.
+        return new static($data);
     }
 
-    public function setAttributes(array $data): self
+    public function setAttributes(): self
     {
-        $this->name = $data['repository']['name'];
+        $this->name = $this->data['name'];
 
-        return $this;
-    }
-
-    public function setAction(string $action): self
-    {
-        return $this;
-    }
-
-    public function setNotionDatabaseId(): self
-    {
         return $this;
     }
 

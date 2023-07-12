@@ -24,7 +24,6 @@ class GithubWebhookRequest
 
     public static function build(Request $request): static
     {
-        Log::info($request);
         return (new static($request));
     }
 
@@ -50,10 +49,6 @@ class GithubWebhookRequest
             GithubEventTypeEnum::PULL_REQUEST => GithubPullRequest::make($this),
             GithubEventTypeEnum::PULL_REQUEST_REVIEW => GithubPullRequestReview::make($this),
         };
-
-        $this->entity
-            ->setAuthor()
-            ->setRepository();
 
         return $this;
     }

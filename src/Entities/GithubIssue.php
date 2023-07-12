@@ -14,7 +14,6 @@ use PISpace\LaravelGithubToNotionWebhooks\WebhookRequests\GithubWebhookRequest;
 
 class GithubIssue extends GithubEntity
 {
-    protected string $notionDatabaseId;
     private IssueActionTypeEnum $action;
     private string $url;
     private string $title;
@@ -31,6 +30,7 @@ class GithubIssue extends GithubEntity
     public function mapToNotion(): array
     {
         return [
+            'id' => NotionText::make('Issue ID'),
             'title' => NotionTitle::make('Title'),
             'url' => NotionUrl::make('Url'),
             'description' => NotionText::make('Description'),
@@ -46,6 +46,7 @@ class GithubIssue extends GithubEntity
     public function getAttributes(): array
     {
         return [
+            'id' => $this->id,
             'title' => $this->title,
             'url' => $this->url,
             'description' => $this->description,
@@ -68,6 +69,7 @@ class GithubIssue extends GithubEntity
 
     protected function setAttributes(array $data): self
     {
+        $this->id = $data['issue']['id'];
         $this->url = $data['issue']['html_url'];
         $this->title = $data['issue']['title'];
         $this->description = $data['issue']['body'];

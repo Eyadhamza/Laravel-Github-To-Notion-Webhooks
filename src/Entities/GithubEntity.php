@@ -10,25 +10,26 @@ use PISpace\LaravelGithubToNotionWebhooks\WebhookRequests\GithubWebhookRequest;
 abstract class GithubEntity
 {
     use Notionable;
-    protected GithubSender $sender;
+    protected string $notionDatabaseId;
+    protected string $id;
+    protected GithubUser $sender;
     protected GithubRepository $repository;
     protected GithubEventTypeEnum $entityType;
-    private GithubWebhookRequest $request;
 
     public function __construct(GithubWebhookRequest $request)
     {
-        $this->request = $request;
-
         $data = $request->all();
 
         $this->entityType = $request->getEntityType();
 
         $this
             ->setAction($data['action'])
-            ->setAttributes($data);
+            ->setAttributes($data)
+            ->setAuthor($data[$this->entityType->value]['user'])
+            ->setRepository($data['repository']);
     }
 
-    public static function make(GithubWebhookRequest $request): self
+    public static function make(GithubWebhookRequest $request): static
     {
         return new static($request);
     }
@@ -37,17 +38,20 @@ abstract class GithubEntity
     abstract public function setAction(string $action): self;
     abstract public function getAction();
 
-    public function setAuthor(): self
+    public function getId(): string
     {
-        $this->sender = GithubSender::make($this->request);
+        return $this->id;
+    }
 
+    public function setAuthor(array $data): self
+    {
+        $this->sender = GithubUser::make($data);
         return $this;
     }
 
-    public function setRepository(): self
+    private function setRepository(array $data): self
     {
-        $this->repository = GithubRepository::make($this->request);
-
+        $this->repository = GithubRepository::make($data);
         return $this;
     }
 }

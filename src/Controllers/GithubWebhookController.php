@@ -26,6 +26,10 @@ class GithubWebhookController extends Controller
     {
         $githubWebhookRequest = GithubWebhookRequest::build($request);
 
+        Log::info('GithubWebhookController', [
+            'request' => $request->all(),
+        ]);
+
         match ($githubWebhookRequest->getEntityType()) {
             GithubEventTypeEnum::ISSUE => GithubIssueHandler::run($githubWebhookRequest),
             GithubEventTypeEnum::PULL_REQUEST => GithubPullRequestHandler::run($githubWebhookRequest),
