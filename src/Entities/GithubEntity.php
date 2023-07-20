@@ -3,11 +3,13 @@
 namespace PISpace\LaravelGithubToNotionWebhooks\Entities;
 
 
+use Pi\Notion\Core\Models\NotionDatabase;
 use Pi\Notion\Traits\Notionable;
 use PISpace\LaravelGithubToNotionWebhooks\Enum\GithubEventTypeEnum;
-use PISpace\LaravelGithubToNotionWebhooks\WebhookRequests\GithubWebhookRequest;
+use PISpace\LaravelGithubToNotionWebhooks\Interfaces\GitHubEntityInterface;
+use PISpace\LaravelGithubToNotionWebhooks\Requests\GithubWebhook;
 
-abstract class GithubEntity
+abstract class GithubEntity implements GithubEntityInterface
 {
     use Notionable;
     protected string $notionDatabaseId;
@@ -15,26 +17,33 @@ abstract class GithubEntity
     protected GithubUser $sender;
     protected GithubRepository $repository;
     protected GithubEventTypeEnum $entityType;
+    protected NotionDatabase $notionDatabase;
 
-    public function __construct(GithubWebhookRequest $request)
+    public function __construct(string $id = null)
     {
-        $data = $request->all();
-
-        $this->entityType = $request->getEntityType();
-
-        $this
-            ->setAction($data['action'])
-            ->setAttributes($data)
-            ->setAuthor($data[$this->entityType->value]['user'])
-            ->setRepository($data['repository']);
+        $this->setNotionDatabaseId();
+        $this->notionDatabase = NotionDatabase::make($this->notionDatabaseId);
     }
 
-    public static function make(GithubWebhookRequest $request): static
+    public static function make(string $id): static
     {
-        return new static($request);
+        return new static($id);
+    }
+    public static function fromRequest(GithubWebhook $request): static
+    {
+        return (new static($request->getId()))
+            ->setEntityType($request->getEntityType())
+            ->setAction($request->getAction())
+            ->setAttributes($request->all()[$request->getEntityType()->value]);
     }
 
-    abstract protected function setAttributes(array $data): self;
+    public static function fromResponse(array $data): static
+    {
+        return (new static($data['id']))
+            ->setAttributes($data);
+    }
+
+    abstract public function setAttributes(array $data): self;
     abstract public function setAction(string $action): self;
     abstract public function getAction();
 
@@ -43,15 +52,32 @@ abstract class GithubEntity
         return $this->id;
     }
 
-    public function setAuthor(array $data): self
+    public function setSender(GithubUser $user): self
     {
-        $this->sender = GithubUser::make($data);
+        $this->sender = $user;
+
         return $this;
     }
 
-    private function setRepository(array $data): self
+    public function setRepository(GithubRepository $repository): self
     {
-        $this->repository = GithubRepository::make($data);
+        $this->repository = $repository;
+
         return $this;
     }
+    abstract public function setNotionDatabaseId(): self;
+
+    private function setEntityType(GithubEventTypeEnum $entityType): static
+    {
+        $this->entityType = $entityType;
+
+        return $this;
+    }
+
+    public function getNotionDatabase(): NotionDatabase
+    {
+        return $this->notionDatabase;
+    }
+
+
 }

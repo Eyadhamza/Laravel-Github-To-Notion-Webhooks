@@ -4,11 +4,13 @@ namespace PISpace\LaravelGithubToNotionWebhooks\Handlers;
 
 use Pi\Notion\Core\Models\NotionDatabase;
 use Pi\Notion\Core\Models\NotionPage;
-use Pi\Notion\Core\Query\NotionFilter;
+use Pi\Notion\Core\Properties\NotionText;
 use PISpace\LaravelGithubToNotionWebhooks\Enum\IssueActionTypeEnum;
+use PISpace\LaravelGithubToNotionWebhooks\Requests\GithubWebhook;
 
 class GithubIssueHandler extends BaseGithubHandler
 {
+
 
     public function create(): self
     {
@@ -21,20 +23,26 @@ class GithubIssueHandler extends BaseGithubHandler
     {
         $idColumnNameInNotion = $this->entity->mapToNotion()['id']->getName();
 
-        $paginated = NotionDatabase::make($this->entity->getNotionDatabaseId())
-            ->filter(NotionFilter::text($idColumnNameInNotion)->equals($this->entity->getId()))
+        $paginated = $this->entity->getNotionDatabase()
+            ->setFilter(NotionText::make($idColumnNameInNotion)->equals($this->entity->getId()))
             ->query();
 
-        $pageId = $paginated->getResults()[0]->getId();
+        $page = $paginated->getResults()->first();
 
-        $this->entity->saveToNotion($pageId);
+        if (!$page) {
+            return $this->create();
+        }
+
+        $this->entity->saveToNotion($page->getId());
 
         return $this;
     }
 
     public function delete(): self
     {
-        // TODO: Implement delete() method.
+        $this->entity->deleteFromNotion($this->entity->getId());
+
+        return $this;
     }
 
     protected function isCreateAction(): bool

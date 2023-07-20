@@ -31,17 +31,7 @@
             "type": "User",
             "site_admin": false
         },
-        "labels": [
-            {
-                "id": 5011186709,
-                "node_id": "LA_kwDOIyKYw88AAAABKrCkFQ",
-                "url": "https://api.github.com/repos/Eyadhamza/TestProject/labels/bug",
-                "name": "bug",
-                "color": "d73a4a",
-                "default": true,
-                "description": "Something isn't working"
-            }
-        ],
+        "labels": [],
         "state": "open",
         "locked": false,
         "assignee": {

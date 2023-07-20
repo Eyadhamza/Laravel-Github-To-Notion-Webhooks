@@ -2,30 +2,32 @@
 
 namespace PISpace\LaravelGithubToNotionWebhooks\Entities;
 
-use Pi\Notion\Core\BlockContent\NotionRichText;
-use Pi\Notion\Core\Models\NotionUser;
-use Pi\Notion\Core\NotionProperty\NotionPeople;
-use Pi\Notion\Core\NotionProperty\NotionSelect;
-use Pi\Notion\Core\NotionProperty\NotionText;
-use Pi\Notion\Core\NotionProperty\NotionTitle;
-use Pi\Notion\Core\NotionProperty\NotionUrl;
+use Illuminate\Http\Resources\ConditionallyLoadsAttributes;
+use Illuminate\Http\Resources\MissingValue;
+use Illuminate\Support\Collection;
+use Pi\Notion\Core\Builders\NotionBlockBuilder;
+use Pi\Notion\Core\Models\NotionDatabase;
+use Pi\Notion\Core\Properties\NotionMultiSelect;
+use Pi\Notion\Core\Properties\NotionPeople;
+use Pi\Notion\Core\Properties\NotionSelect;
+use Pi\Notion\Core\Properties\NotionText;
+use Pi\Notion\Core\Properties\NotionTitle;
+use Pi\Notion\Core\Properties\NotionUrl;
 use PISpace\LaravelGithubToNotionWebhooks\Enum\IssueActionTypeEnum;
-use PISpace\LaravelGithubToNotionWebhooks\WebhookRequests\GithubWebhookRequest;
+use PISpace\LaravelGithubToNotionWebhooks\Interfaces\GitHubEntityInterface;
 
-class GithubIssue extends GithubEntity
+class GithubIssue extends GithubEntity implements GithubEntityInterface
 {
+    use ConditionallyLoadsAttributes;
     private IssueActionTypeEnum $action;
     private string $url;
     private string $title;
     private string $description;
     private string $state;
 
-    public function __construct(GithubWebhookRequest $request)
-    {
-        parent::__construct($request);
-
-        $this->setNotionDatabaseId();
-    }
+    /** @var array<GithubUser> */
+    private array $assignees;
+    private Collection $labels;
 
     public function mapToNotion(): array
     {
@@ -35,25 +37,24 @@ class GithubIssue extends GithubEntity
             'url' => NotionUrl::make('Url'),
             'description' => NotionText::make('Description'),
             'state' => NotionSelect::make('Status'),
-            'author' => NotionPeople::make('Author')
-                ->setPeople([
-                    new NotionUser('2c4d6a4a-12fe-4ce8-a7e4-e3019cc4765f')
-                ]),
+            'author' => NotionPeople::make('Author')->setPeople($this->sender->getNotionUser()),
             'repository' => NotionText::make('Repository'),
+            'assignees' => NotionPeople::make('Assignees')->setPeople($this->assignees),
+            'labels' => NotionMultiSelect::make('Labels'),
         ];
     }
 
     public function getAttributes(): array
     {
-        return [
+        return $this->filter([
             'id' => $this->id,
             'title' => $this->title,
             'url' => $this->url,
             'description' => $this->description,
             'state' => $this->state,
-            'author' => $this->sender->getName(),
             'repository' => $this->repository->getName(),
-        ];
+            'labels' => $this->when($this->labels->isNotEmpty(), $this->labels->all()),
+        ]);
     }
 
     public function setAction(string $action): self
@@ -67,21 +68,34 @@ class GithubIssue extends GithubEntity
         return $this->action;
     }
 
-    protected function setAttributes(array $data): self
+    public function setAttributes(array $data): self
     {
-        $this->id = $data['issue']['id'];
-        $this->url = $data['issue']['html_url'];
-        $this->title = $data['issue']['title'];
-        $this->description = $data['issue']['body'];
-        $this->state = $data['issue']['state'];
-        $this->action = IssueActionTypeEnum::from($data['action']);
-
+        $this->id = $data['id'];
+        $this->url = $data['html_url'];
+        $this->title = $data['title'];
+        $this->description = $data['body'];
+        $this->state = $data['state'];
+        $this->assignees = collect($data['assignees'])->map(fn($assignee) => GithubUser::fromResponse($assignee)->getNotionUser())->flatten()->all();
+        $this->setLabels($data['labels']);
         return $this;
     }
 
     public function setNotionDatabaseId(): self
     {
         $this->notionDatabaseId = config('github-webhooks.notion.databases.issues');
+
+        return $this;
+    }
+
+    protected function setBlockBuilder(): void
+    {
+        $this->blockBuilder->paragraph($this->description);
+    }
+
+    private function setLabels(array $labels): self
+    {
+        $this->labels = collect($labels)->map(fn($label) => $label['name']);
+
         return $this;
     }
 }

@@ -3,20 +3,20 @@
 namespace PISpace\LaravelGithubToNotionWebhooks\Handlers;
 
 use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubEntity;
-use PISpace\LaravelGithubToNotionWebhooks\WebhookRequests\GithubWebhookRequest;
+use PISpace\LaravelGithubToNotionWebhooks\Requests\GithubWebhook;
 
 abstract class BaseGithubHandler
 {
-    protected GithubWebhookRequest $request;
+    protected GithubWebhook $request;
     protected GithubEntity $entity;
 
-    public function __construct(GithubWebhookRequest $request)
+    public function __construct(GithubWebhook $request)
     {
         $this->request = $request;
         $this->entity = $request->getEntity();
     }
 
-    public static function run(GithubWebhookRequest $request): self
+    public static function run(GithubWebhook $request): self
     {
         return (new static($request))->handle();
     }

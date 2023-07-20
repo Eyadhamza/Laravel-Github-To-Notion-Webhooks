@@ -3,8 +3,9 @@
 namespace PISpace\LaravelGithubToNotionWebhooks\Entities;
 
 use PISpace\LaravelGithubToNotionWebhooks\Enum\IssueActionTypeEnum;
+use PISpace\LaravelGithubToNotionWebhooks\Interfaces\GitHubPullRequestReviewInterface;
 
-class GithubPullRequestReview extends GithubEntity
+class GithubPullRequestReview extends GithubEntity implements GitHubPullRequestReviewInterface
 {
     private IssueActionTypeEnum $action;
     private string $url;
@@ -41,7 +42,7 @@ class GithubPullRequestReview extends GithubEntity
         // TODO: Implement setAction() method.
     }
 
-    protected function setAttributes(array $data): self
+    public function setAttributes(array $data): self
     {
         $this->url = $data['html_url'];
         $this->title = $data['title'];
@@ -52,4 +53,13 @@ class GithubPullRequestReview extends GithubEntity
         return $this;
     }
 
+    public function getAction()
+    {
+        // TODO: Implement getAction() method.
+    }
+
+    public function setNotionDatabaseId(): GithubEntity
+    {
+        // TODO: Implement setNotionDatabaseId() method.
+    }
 }

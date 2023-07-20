@@ -2,20 +2,25 @@
 
 namespace PISpace\LaravelGithubToNotionWebhooks\Entities;
 
-class GithubUser
-{
-    private string $id;
-    private string $name;
-    private array $data;
+use Pi\Notion\Core\Models\NotionDatabase;
+use Pi\Notion\Core\Models\NotionPage;
+use Pi\Notion\Core\Models\NotionUser;
+use Pi\Notion\Core\Properties\BaseNotionProperty;
+use Pi\Notion\Core\Properties\NotionText;
+use Pi\Notion\Core\Properties\NotionTitle;
 
-    public function __construct(array $data)
+class GithubUser extends GithubEntity
+{
+    private string $name;
+    private string $notionId;
+
+    public function mapToNotion(): array
     {
-        $this->data = $data;
-        $this->setAttributes();
-    }
-    public static function make(array $data): self
-    {
-        return new static($data);
+        return [
+            'id' => NotionText::make('GitHub ID'),
+            'name' => NotionText::make('Name'),
+            'notion_id' => NotionText::make('Notion ID'),
+        ];
     }
     public function getAttributes(): array
     {
@@ -25,9 +30,10 @@ class GithubUser
         ];
     }
 
-    public function setAttributes(): self
+    public function setAttributes(array $data): self
     {
-        $this->name = $this->data['login'];
+        $this->id = $data['id'];
+        $this->name = $data['login'];
 
         return $this;
     }
@@ -52,4 +58,29 @@ class GithubUser
     {
         return null;
     }
+
+    public function getNotionUser()
+    {
+        /** @var NotionPage $notionPage */
+        $notionPage = $this->notionDatabase
+            ->setFilter(
+                NotionTitle::make('GitHub Username')->equals($this->name)
+            )
+            ->query()
+            ->getResults()
+            ->first();
+
+        /** @var BaseNotionProperty $peopleProperty */
+        $peopleProperty = $notionPage->getProperties()->first();
+
+        return $peopleProperty->getValue();
+
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+
 }
