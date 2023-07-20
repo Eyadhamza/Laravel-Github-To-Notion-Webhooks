@@ -10,8 +10,6 @@ use PISpace\LaravelGithubToNotionWebhooks\Requests\GithubWebhook;
 
 class GithubIssueHandler extends BaseGithubHandler
 {
-
-
     public function create(): self
     {
         $this->entity->saveToNotion();

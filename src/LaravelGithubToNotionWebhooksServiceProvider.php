@@ -30,9 +30,9 @@ class LaravelGithubToNotionWebhooksServiceProvider extends PackageServiceProvide
             ->hasMigration('create_laravel-github-to-notion-webhooks_table')
             ->hasCommand(LaravelGithubToNotionWebhooksCommand::class);
 
-        app()->bind(GitHubIssueInterface::class, GitHubIssue::class);
-        app()->bind(GitHubPullRequestInterface::class, GitHubPullRequest::class);
-        app()->bind(GitHubPullRequestReviewInterface::class, GitHubPullRequestReview::class);
+        $this->app->bind(GitHubIssueInterface::class, GitHubIssue::class);
+        $this->app->bind(GitHubPullRequestInterface::class, GitHubPullRequest::class);
+        $this->app->bind(GitHubPullRequestReviewInterface::class, GitHubPullRequestReview::class);
 
     }
 }
