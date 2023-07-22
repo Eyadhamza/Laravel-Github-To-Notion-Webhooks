@@ -2,14 +2,37 @@
 
 namespace PISpace\LaravelGithubToNotionWebhooks\Handlers;
 
-use Pi\Notion\Core\Models\NotionDatabase;
-use Pi\Notion\Core\Models\NotionPage;
 use Pi\Notion\Core\Properties\NotionText;
+use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubEntity;
 use PISpace\LaravelGithubToNotionWebhooks\Enum\IssueActionTypeEnum;
 use PISpace\LaravelGithubToNotionWebhooks\Requests\GithubWebhook;
 
-class GithubIssueHandler extends BaseGithubHandler
+class GithubWebhookHandler
 {
+    protected GithubWebhook $request;
+    protected GithubEntity $entity;
+
+    public function __construct(GithubWebhook $request)
+    {
+        $this->request = $request;
+        $this->entity = $request->getEntity();
+    }
+
+    public static function run(GithubWebhook $request): self
+    {
+        return (new static($request))->handle();
+    }
+
+    public function handle(): self
+    {
+        return match (true) {
+            $this->entity->isCreateAction() => $this->create(),
+            $this->entity->isUpdatedAction() => $this->update(),
+            $this->entity->isDeletedAction() => $this->delete(),
+            default => $this
+        };
+    }
+
     public function create(): self
     {
         $this->entity->saveToNotion();
@@ -43,18 +66,4 @@ class GithubIssueHandler extends BaseGithubHandler
         return $this;
     }
 
-    protected function isCreateAction(): bool
-    {
-        return $this->entity->getAction() === IssueActionTypeEnum::OPENED;
-    }
-
-    protected function isUpdatedAction(): bool
-    {
-        return ! $this->isCreateAction() && ! $this->isDeletedAction();
-    }
-
-    protected function isDeletedAction(): bool
-    {
-        return $this->entity->getAction() === IssueActionTypeEnum::DELETED;
-    }
 }

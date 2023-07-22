@@ -5,9 +5,9 @@ use function Pest\Laravel\withoutExceptionHandling;
 beforeEach(function () {
     withoutExceptionHandling();
 
-    $this->createPayload = json_decode(file_get_contents(__DIR__ . '/Payloads/create_issue_webhook.json'), true);
-    $this->createPayloadWithoutLabel = json_decode(file_get_contents(__DIR__ . '/Payloads/create_issue_webhook_without_labels.json'), true);
-    $this->updatePayload = json_decode(file_get_contents(__DIR__ . '/Payloads/update_issue_webhook.json'), true);
+    $this->createPayload = json_decode(file_get_contents(__DIR__ . '/Payloads/Issue/create_issue_webhook.json'), true);
+    $this->createPayloadWithoutLabel = json_decode(file_get_contents(__DIR__ . '/Payloads/Issue/create_issue_webhook_without_labels.json'), true);
+    $this->updatePayload = json_decode(file_get_contents(__DIR__ . '/Payloads/Issue/update_issue_webhook.json'), true);
 
 });
 

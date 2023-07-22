@@ -2,64 +2,67 @@
 
 namespace PISpace\LaravelGithubToNotionWebhooks\Entities;
 
-use PISpace\LaravelGithubToNotionWebhooks\Enum\IssueActionTypeEnum;
+use PISpace\LaravelGithubToNotionWebhooks\Enum\PullRequestActionTypeEnum;
 use PISpace\LaravelGithubToNotionWebhooks\Interfaces\GitHubPullRequestInterface;
+use PISpace\LaravelGithubToNotionWebhooks\Transformers\PullRequestTransformer;
 
-class GithubPullRequest extends GithubEntity implements GitHubPullRequestInterface
+class GithubPullRequest extends GithubContribution implements GitHubPullRequestInterface
 {
-    private IssueActionTypeEnum $action;
-    private string $url;
-    private string $title;
-    private string $description;
-    private string $state;
-
-    public function __construct(array $data)
-    {
-        parent::__construct($data);
-        $this->notionDatabaseId = config('github-webhooks.notion.databases.issues');
-        $this->setAttributes($data);
-    }
+    private PullRequestActionTypeEnum $action;
+    protected array $reviewers;
 
     public function mapToNotion(): array
     {
-        // TODO: Implement mapToNotion() method.
-    }
-
-    public function getAttributes(): array
-    {
-        return [
-            'title' => $this->title,
-            'url' => $this->url,
-            'description' => $this->description,
-            'state' => $this->state,
-            'author' => $this->sender->getName(),
-            'repository' => $this->repository->getName(),
-        ];
+        return PullRequestTransformer::transform($this);
     }
 
     public function setAction(string $action): self
     {
-        // TODO: Implement setAction() method.
-    }
-
-    public function setAttributes(array $data): self
-    {
-        $this->url = $data['html_url'];
-        $this->title = $data['title'];
-        $this->description = $data['body'];
-        $this->state = $data['state'];
-        $this->action = IssueActionTypeEnum::from($data['action']);
+        $this->action = PullRequestActionTypeEnum::from($action);
 
         return $this;
     }
 
-    public function getAction()
+    public function setAttributes(array $data): self
     {
-        // TODO: Implement getAction() method.
+        parent::setAttributes($data);
+        $this->setReviewers($data['requested_reviewers']);
+        return $this;
+    }
+
+    public function getAction(): PullRequestActionTypeEnum
+    {
+        return $this->action;
     }
 
     public function setNotionDatabaseId(): GithubEntity
     {
-        // TODO: Implement setNotionDatabaseId() method.
+        $this->notionDatabaseId = config('github-webhooks.notion.databases.pull-requests');
+
+        return $this;
+    }
+
+    public function isCreateAction(): bool
+    {
+        return $this->action === PullRequestActionTypeEnum::OPENED;
+    }
+
+    public function isUpdatedAction(): bool
+    {
+        return $this->action != PullRequestActionTypeEnum::OPENED;
+    }
+
+    public function isDeletedAction(): bool
+    {
+        return false;
+    }
+
+    private function setReviewers(array $data): void
+    {
+        $this->reviewers = collect($data)
+            ->map(fn($reviewer) => GithubUser::fromResponse($reviewer)->getNotionUser())
+            ->filter()
+            ->flatten()
+            ->all();
     }
 }

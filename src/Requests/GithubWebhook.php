@@ -10,6 +10,7 @@ use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubPullRequestReview;
 use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubRepository;
 use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubUser;
 use PISpace\LaravelGithubToNotionWebhooks\Enum\GithubEventTypeEnum;
+use PISpace\LaravelGithubToNotionWebhooks\Exception\ExceptionHandler;
 use PISpace\LaravelGithubToNotionWebhooks\Interfaces\GitHubIssueInterface;
 use PISpace\LaravelGithubToNotionWebhooks\Interfaces\GitHubPullRequestInterface;
 use PISpace\LaravelGithubToNotionWebhooks\Interfaces\GitHubPullRequestReviewInterface;
@@ -33,13 +34,16 @@ class GithubWebhook
 
     public function setEventType(): self
     {
-        foreach (config('github-webhooks.github.events') as $event => $value) {
+        $validEvents = config('github-webhooks.github.events');
+
+        foreach ($validEvents as $event => $value) {
             if ($value && $this->request->has($event)) {
                 $this->eventType = GithubEventTypeEnum::from($event);
-                break;
+                return $this;
             }
         }
-        return $this;
+
+        ExceptionHandler::badRequest('Invalid event type');
     }
 
     public function getEntityType(): GithubEventTypeEnum
@@ -49,9 +53,9 @@ class GithubWebhook
     private function setEntity(): self
     {
         $this->entity = match ($this->eventType) {
-            GithubEventTypeEnum::ISSUE => app(GitHubIssueInterface::class)->fromRequest($this),
-            GithubEventTypeEnum::PULL_REQUEST => app(GitHubPullRequestInterface::class)->fromRequest($this),
-            GithubEventTypeEnum::PULL_REQUEST_REVIEW => app(GitHubPullRequestReviewInterface::class)->fromRequest($this),
+            GithubEventTypeEnum::ISSUE => GithubIssue::fromRequest($this),
+            GithubEventTypeEnum::PULL_REQUEST => GitHubPullRequest::fromRequest($this),
+            GithubEventTypeEnum::PULL_REQUEST_REVIEW => GitHubPullRequestReview::fromRequest($this),
         };
 
         $this->entity

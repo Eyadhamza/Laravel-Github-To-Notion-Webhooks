@@ -2,7 +2,6 @@
 
 namespace PISpace\LaravelGithubToNotionWebhooks\Entities;
 
-use Pi\Notion\Core\Models\NotionDatabase;
 use Pi\Notion\Core\Models\NotionPage;
 use Pi\Notion\Core\Models\NotionUser;
 use Pi\Notion\Core\Properties\BaseNotionProperty;
@@ -59,7 +58,7 @@ class GithubUser extends GithubEntity
         return null;
     }
 
-    public function getNotionUser()
+    public function getNotionUser(): NotionUser|array|null
     {
         /** @var NotionPage $notionPage */
         $notionPage = $this->notionDatabase
@@ -70,6 +69,9 @@ class GithubUser extends GithubEntity
             ->getResults()
             ->first();
 
+        if (!$notionPage) {
+            return null;
+        }
         /** @var BaseNotionProperty $peopleProperty */
         $peopleProperty = $notionPage->getProperties()->first();
 
@@ -83,4 +85,18 @@ class GithubUser extends GithubEntity
         return $this;
     }
 
+    public function isCreateAction(): bool
+    {
+        return true;
+    }
+
+    public function isUpdatedAction(): bool
+    {
+        return false;
+    }
+
+    public function isDeletedAction(): bool
+    {
+        return false;
+    }
 }

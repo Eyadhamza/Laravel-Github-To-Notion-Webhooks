@@ -3,9 +3,8 @@
 namespace PISpace\LaravelGithubToNotionWebhooks\Entities;
 
 use PISpace\LaravelGithubToNotionWebhooks\Enum\IssueActionTypeEnum;
-use PISpace\LaravelGithubToNotionWebhooks\Interfaces\GitHubPullRequestReviewInterface;
 
-class GithubPullRequestReview extends GithubEntity implements GitHubPullRequestReviewInterface
+class GithubPullRequestReview extends GithubEntity
 {
     private IssueActionTypeEnum $action;
     private string $url;

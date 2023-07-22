@@ -2,22 +2,15 @@
 
 namespace PISpace\LaravelGithubToNotionWebhooks\Entities;
 
-class GithubRepository extends GithubEntity
+class GithubRepository
 {
 
     private string $name;
 
-
-    public function setAttributes(array $data): self
+    public static function fromResponse(array $data): self
     {
-        $this->name = $data['name'];
-
-        return $this;
-    }
-
-    public function getAction()
-    {
-        return null;
+        return (new static())
+            ->setAttributes($data);
     }
 
     public function getName(): string
@@ -25,24 +18,11 @@ class GithubRepository extends GithubEntity
         return $this->name;
     }
 
-    public function setAction(string $action): self
+    private function setAttributes(array $data): self
     {
+        $this->name = $data['name'];
+
         return $this;
     }
 
-    public function mapToNotion(): array
-    {
-        // TODO: Implement mapToNotion() method.
-    }
-
-    public function getAttributes()
-    {
-        // TODO: Implement getAttributes() method.
-    }
-
-    public function setNotionDatabaseId(): self
-    {
-        $this->notionDatabaseId = config('github-webhooks.notion.databases.repositories');
-        return $this;
-    }
 }
