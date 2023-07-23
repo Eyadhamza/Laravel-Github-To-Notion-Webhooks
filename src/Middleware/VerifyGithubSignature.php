@@ -4,6 +4,8 @@ namespace PISpace\LaravelGithubToNotionWebhooks\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use PISpace\LaravelGithubToNotionWebhooks\Exception\ExceptionHandler;
+
 class VerifyGithubSignature
 {
 
@@ -14,7 +16,7 @@ class VerifyGithubSignature
         $signature = 'sha256=' . hash_hmac('sha256', $payloadBody, config('github-webhooks.github.secret'));
 
         if (!hash_equals($signature, $request->header('X-Hub-Signature-256'))) {
-            abort(500, "Github Signature didn't match!");
+            ExceptionHandler::badRequest('Invalid Signature');
         }
 
         return $next($request);

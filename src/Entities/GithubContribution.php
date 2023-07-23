@@ -2,8 +2,6 @@
 
 namespace PISpace\LaravelGithubToNotionWebhooks\Entities;
 
-use Illuminate\Http\Resources\MissingValue;
-use Illuminate\Support\Collection;
 use PISpace\LaravelGithubToNotionWebhooks\Transformers\ContributionTransformer;
 
 abstract class GithubContribution extends GithubEntity

@@ -4,7 +4,6 @@ namespace PISpace\LaravelGithubToNotionWebhooks\Handlers;
 
 use Pi\Notion\Core\Properties\NotionText;
 use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubEntity;
-use PISpace\LaravelGithubToNotionWebhooks\Enum\IssueActionTypeEnum;
 use PISpace\LaravelGithubToNotionWebhooks\Requests\GithubWebhook;
 
 class GithubWebhookHandler

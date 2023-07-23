@@ -3,17 +3,17 @@
 namespace PISpace\LaravelGithubToNotionWebhooks\Entities;
 
 use PISpace\LaravelGithubToNotionWebhooks\Enum\PullRequestActionTypeEnum;
-use PISpace\LaravelGithubToNotionWebhooks\Interfaces\GitHubPullRequestInterface;
+use PISpace\LaravelGithubToNotionWebhooks\Interfaces\PullRequestTransformerInterface;
 use PISpace\LaravelGithubToNotionWebhooks\Transformers\PullRequestTransformer;
 
-class GithubPullRequest extends GithubContribution implements GitHubPullRequestInterface
+class GithubPullRequest extends GithubContribution
 {
     private PullRequestActionTypeEnum $action;
     protected array $reviewers;
 
     public function mapToNotion(): array
     {
-        return PullRequestTransformer::transform($this);
+        return app(PullRequestTransformerInterface::class)::transform($this);
     }
 
     public function setAction(string $action): self

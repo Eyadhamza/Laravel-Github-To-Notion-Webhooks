@@ -8,13 +8,14 @@ use Pi\Notion\Core\Properties\NotionSelect;
 use Pi\Notion\Core\Properties\NotionText;
 use Pi\Notion\Core\Properties\NotionTitle;
 use Pi\Notion\Core\Properties\NotionUrl;
+use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubContribution;
 use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubEntity;
-use PISpace\LaravelGithubToNotionWebhooks\Interfaces\TransformerInterface;
+use PISpace\LaravelGithubToNotionWebhooks\Interfaces\ContributionTransformerInterface;
 
-class ContributionTransformer implements TransformerInterface
+class ContributionTransformer implements ContributionTransformerInterface
 {
 
-    public static function transform(GithubEntity $entity): array
+    public static function transform(GithubContribution $contribution = null): array
     {
         return [
             'id' => NotionText::make('ID'),

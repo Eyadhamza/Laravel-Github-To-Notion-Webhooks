@@ -8,7 +8,7 @@ use PISpace\LaravelGithubToNotionWebhooks\Interfaces\PullRequestTransformerInter
 
 class PullRequestTransformer implements PullRequestTransformerInterface
 {
-    public static function transform(GithubPullRequest $pullRequest): array
+    public static function transform(GithubPullRequest $pullRequest = null): array
     {
         return array_merge(ContributionTransformer::transform($pullRequest), [
             'reviewers' => NotionPeople::make('Reviewers'),

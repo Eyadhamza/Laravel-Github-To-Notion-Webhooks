@@ -2,16 +2,15 @@
 
 namespace PISpace\LaravelGithubToNotionWebhooks;
 
-use Illuminate\Support\Facades\App;
-use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubIssue;
-use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubPullRequest;
-use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubPullRequestReview;
-use PISpace\LaravelGithubToNotionWebhooks\Interfaces\GitHubIssueInterface;
-use PISpace\LaravelGithubToNotionWebhooks\Interfaces\GitHubPullRequestInterface;
-use PISpace\LaravelGithubToNotionWebhooks\Interfaces\GitHubPullRequestReviewInterface;
+use PISpace\LaravelGithubToNotionWebhooks\Commands\CreateNotionDatabasesCommand;
+use PISpace\LaravelGithubToNotionWebhooks\Interfaces\ContributionTransformerInterface;
+use PISpace\LaravelGithubToNotionWebhooks\Interfaces\IssueTransformerInterface;
+use PISpace\LaravelGithubToNotionWebhooks\Interfaces\PullRequestTransformerInterface;
+use PISpace\LaravelGithubToNotionWebhooks\Transformers\ContributionTransformer;
+use PISpace\LaravelGithubToNotionWebhooks\Transformers\IssueTransformer;
+use PISpace\LaravelGithubToNotionWebhooks\Transformers\PullRequestTransformer;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use PISpace\LaravelGithubToNotionWebhooks\Commands\LaravelGithubToNotionWebhooksCommand;
 
 class LaravelGithubToNotionWebhooksServiceProvider extends PackageServiceProvider
 {
@@ -28,11 +27,11 @@ class LaravelGithubToNotionWebhooksServiceProvider extends PackageServiceProvide
             ->hasConfigFile('github-webhooks')
             ->hasViews()
             ->hasMigration('create_laravel-github-to-notion-webhooks_table')
-            ->hasCommand(LaravelGithubToNotionWebhooksCommand::class);
+            ->hasCommand(CreateNotionDatabasesCommand::class);
 
-        $this->app->bind(GitHubIssueInterface::class, GitHubIssue::class);
-        $this->app->bind(GitHubPullRequestInterface::class, GitHubPullRequest::class);
-        $this->app->bind(GitHubPullRequestReviewInterface::class, GitHubPullRequestReview::class);
+        $this->app->bind(IssueTransformerInterface::class, IssueTransformer::class);
+        $this->app->bind(ContributionTransformerInterface::class, ContributionTransformer::class);
+        $this->app->bind(PullRequestTransformerInterface::class, PullRequestTransformer::class);
 
     }
 }

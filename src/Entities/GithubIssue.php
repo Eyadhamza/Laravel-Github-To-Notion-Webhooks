@@ -3,6 +3,7 @@
 namespace PISpace\LaravelGithubToNotionWebhooks\Entities;
 
 use PISpace\LaravelGithubToNotionWebhooks\Enum\IssueActionTypeEnum;
+use PISpace\LaravelGithubToNotionWebhooks\Interfaces\IssueTransformerInterface;
 use PISpace\LaravelGithubToNotionWebhooks\Transformers\IssueTransformer;
 
 class GithubIssue extends GithubContribution
@@ -11,7 +12,7 @@ class GithubIssue extends GithubContribution
 
     public function mapToNotion(): array
     {
-        return IssueTransformer::transform($this);
+        return app(IssueTransformerInterface::class)->transform($this);
     }
 
     public function setAction(string $action): self

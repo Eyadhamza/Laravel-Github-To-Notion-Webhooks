@@ -10,7 +10,7 @@ use PISpace\LaravelGithubToNotionWebhooks\Interfaces\PullRequestTransformerInter
 
 class IssueTransformer implements IssueTransformerInterface
 {
-    public static function transform(GithubIssue $issue): array
+    public static function transform(GithubIssue $issue = null): array
     {
         return ContributionTransformer::transform($issue);
     }

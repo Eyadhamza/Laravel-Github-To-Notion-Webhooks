@@ -6,11 +6,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
-use PISpace\LaravelGithubToNotionWebhooks\Enum\GithubEventTypeEnum;
 use PISpace\LaravelGithubToNotionWebhooks\Handlers\GithubWebhookHandler;
-use PISpace\LaravelGithubToNotionWebhooks\Handlers\GithubIssueWebhookHandler;
-use PISpace\LaravelGithubToNotionWebhooks\Handlers\GithubPullRequestWebhookHandler;
-use PISpace\LaravelGithubToNotionWebhooks\Handlers\GithubPullRequestReviewWebhookHandler;
+use PISpace\LaravelGithubToNotionWebhooks\Middleware\EnsureValidEventType;
 use PISpace\LaravelGithubToNotionWebhooks\Middleware\VerifyGithubSignature;
 use PISpace\LaravelGithubToNotionWebhooks\Requests\GithubWebhook;
 
@@ -19,7 +16,10 @@ class GithubWebhookController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(VerifyGithubSignature::class);
+        $this->middleware([
+            VerifyGithubSignature::class,
+            EnsureValidEventType::class
+        ]);
     }
 
     public function __invoke(Request $request): JsonResponse

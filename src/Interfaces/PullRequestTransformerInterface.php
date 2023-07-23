@@ -6,5 +6,5 @@ use PISpace\LaravelGithubToNotionWebhooks\Entities\GithubPullRequest;
 
 interface PullRequestTransformerInterface
 {
-    public static function transform(GithubPullRequest $pullRequest): array;
+    public static function transform(GithubPullRequest $pullRequest = null): array;
 }
