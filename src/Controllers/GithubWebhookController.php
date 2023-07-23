@@ -24,12 +24,7 @@ class GithubWebhookController extends Controller
 
     public function __invoke(Request $request): JsonResponse
     {
-        Log::info('GithubWebhookController', [
-            'request' => $request->all(),
-        ]);
-
         $githubWebhook = GithubWebhook::build($request);
-
 
         GithubWebhookHandler::run($githubWebhook);
 

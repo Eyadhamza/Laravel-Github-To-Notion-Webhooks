@@ -4,7 +4,6 @@ namespace PISpace\LaravelGithubToNotionWebhooks\Entities;
 
 use PISpace\LaravelGithubToNotionWebhooks\Enum\IssueActionTypeEnum;
 use PISpace\LaravelGithubToNotionWebhooks\Interfaces\IssueTransformerInterface;
-use PISpace\LaravelGithubToNotionWebhooks\Transformers\IssueTransformer;
 
 class GithubIssue extends GithubContribution
 {

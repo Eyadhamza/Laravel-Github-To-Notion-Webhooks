@@ -41,7 +41,6 @@ class GithubWebhook
         $this->entity = match ($this->eventType) {
             GithubEventTypeEnum::ISSUE => GithubIssue::fromRequest($this),
             GithubEventTypeEnum::PULL_REQUEST => GitHubPullRequest::fromRequest($this),
-            GithubEventTypeEnum::PULL_REQUEST_REVIEW => GitHubPullRequestReview::fromRequest($this),
         };
 
         $this->entity
