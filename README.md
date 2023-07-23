@@ -67,6 +67,8 @@ php artisan notion:create-databases {parentPageId}
 
 Note that `parentPageId` is the ID of the page where you want to create the databases. You can find this ID by going to the page, clicking on "Share," and copying the link. The ID is the last part of the link after the page name.
 
+> For Example, if the link is `https://www.notion.so/My-Page-Name-430cedc2495348df926ca520e1255182`, the ID is `430cedc2495348df926ca520e1255182`.
+
 The command will return something like this:
 
 ```bash
@@ -75,7 +77,12 @@ Pull Requests database created successfully with id: b99a0a1287d142bbbd7bec87fe1
 Users database created successfully with id: 430cedc2495348df926ca520e1255182
 ```
 
-2. Paste the IDs in the config file under the `notion.databases` section.
+2. Paste the IDs in the config file under the `notion.databases` section as shown in the previous example.
+3. Add the Notion API key and the database ID to your .env file like this, to know more about the Notion API key, refer to the [Notion API Docs](https://developers.notion.com/docs/create-a-notion-integration)
+
+```php
+NOTION_TOKEN=secret_{your_token}
+```
 
 ## Usage
 
