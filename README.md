@@ -54,8 +54,8 @@ In your GitHub repository settings, you need to do two things:
 ### Notion Configuration
 
 The `notion` section specifies the Notion database IDs where you want to store the synced data. You can either create the Notion databases manually or use an artisan command that will generate the databases for you and return the IDs. If you choose the latter option, follow the steps below:
-> note that this will generate a specific database with some specified properties names and types, If you want to customize the properties please refer to the [#customization](#customization) section.
-
+> Note that this will generate a specific database with some specified properties names and types, If you want to customize the properties please refer to the [#customization](#customization) section.
+> Note that the Users Database in Notion is mandatory, because it will be used to identify the GitHub username and map it to the notion user, make sure you populate the table by hand, write each github username, then mention the notion user in the Person property.
 1. Call the artisan command to create the databases in Notion and get the IDs:
 
 ```bash
@@ -76,7 +76,7 @@ Users database created successfully with id: 430cedc2495348df926ca520e1255182
 ## Usage
 
 Then?
-No, that's it!, you are good to go, the package will take care of the rest, you can now go to your github repo and create an issue or a pull request and you will see the data in notion, now if you want to either change the properties names or types you may continue with the docs, or if you want to listen to other events that are not supported by the package refer to the contribution section and then send a PR, each event type won't take 15 minutes in writing!
+No, that's it!, you are good to go, the package will take care of the rest, you can now go to your github repo and create an issue or a pull request and you will see the data in notion, now if you want to either change the properties names or types you may continue with the docs, or if you want to listen to other events that are not supported by the package refer to the contribution section and then send a PR.
 
 
 ## Customization
@@ -131,10 +131,6 @@ composer test
 ## Changelog
 
 Please see the [CHANGELOG](CHANGELOG.md) for a detailed history of changes to the package.
-
-## Contributing
-
-If you encounter any issues or have ideas for improvements, we welcome your contributions! Please refer to the [CONTRIBUTING](CONTRIBUTING.md) file for details on how to contribute.
 
 ## Security Vulnerabilities
 
